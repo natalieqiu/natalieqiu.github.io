@@ -1,0 +1,46 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+
+}
+
+body{
+    background-color: azure;
+}
+
+.container{
+    width: 90vw;
+    max-width: 62.5em;
+    border: 1px solid black;
+    position: relative;
+    margin: auto;
+}
+
+.add-flashcard-con{
+    display: flex;
+    justify-content: flex-end;
+    padding: 1.2em 1em;
+}
+
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.add-flashcard-con button{
+    font-size: 1em;
+    background-color: blueviolet;
+    color: white;
+    padding: 0.8em 1.2em;
+    font-weight: 500;
+    border-radius: 0.4em;
+
+}
+
+#card-con {
+    border: 1px solid black;
+    margin-top: 1em;
+}

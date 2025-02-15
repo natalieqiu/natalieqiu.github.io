@@ -10,10 +10,20 @@ let editBool = false;
 let cards = [];
 let currentCardIndex = -1;
 
+// Initialize the card list container reference
+const listCard = document.querySelector(".card-list-container");
+if (!listCard) {
+  console.error("Could not find card-list-container element");
+}
+
 // Load cards from local storage when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-  loadCardsFromLocalStorage();
-  renderCards();
+  try {
+    loadCardsFromLocalStorage();
+    renderCards();
+  } catch (error) {
+    console.error("Error during initialization:", error);
+  }
 });
 
 // Add question when user clicks 'Add Flashcard' button
@@ -78,20 +88,32 @@ cardButton.addEventListener(
 
 // Save cards to local storage
 function saveCardsToLocalStorage() {
-  localStorage.setItem('flashcards', JSON.stringify(cards));
+  try {
+    localStorage.setItem('flashcards', JSON.stringify(cards));
+  } catch (error) {
+    console.error("Error saving to localStorage:", error);
+  }
 }
 
 // Load cards from local storage
 function loadCardsFromLocalStorage() {
-  const storedCards = localStorage.getItem('flashcards');
-  if (storedCards) {
-    cards = JSON.parse(storedCards);
+  try {
+    const storedCards = localStorage.getItem('flashcards');
+    if (storedCards) {
+      cards = JSON.parse(storedCards);
+    } else {
+      cards = [];
+    }
+  } catch (error) {
+    console.error("Error loading from localStorage:", error);
+    cards = [];
   }
 }
 
 // Render all cards
 function renderCards() {
-  const listCard = document.getElementsByClassName("card-list-container")[0];
+  if (!listCard) return;
+
   // Clear existing cards
   listCard.innerHTML = '';
 

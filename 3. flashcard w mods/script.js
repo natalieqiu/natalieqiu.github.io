@@ -268,3 +268,5 @@ function createCardElement(card, index) {
   div.appendChild(buttonsCon);
   return div;
 }
+
+// the one that works

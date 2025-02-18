@@ -29,16 +29,48 @@ const addSetButton = document.createElement("button");
 addSetButton.textContent = "Create New Set";
 addSetButton.id = "add-set-btn";
 
+// Delete set button
+const deleteSetButton = document.createElement("button");
+deleteSetButton.textContent = "Delete Current Set";
+deleteSetButton.id = "delete-set-btn";
+deleteSetButton.classList.add("danger-button");
+
 // Create a set management container
 const setManagementDiv = document.createElement("div");
 setManagementDiv.classList.add("set-management");
+
+const setControls = document.createElement("div");
+setControls.classList.add("set-controls");
+
 setManagementDiv.appendChild(setSelector);
 setManagementDiv.appendChild(setNameInput);
 setManagementDiv.appendChild(addSetButton);
+setControls.appendChild(deleteSetButton);
+
+setManagementDiv.appendChild(setControls);
+
+// Create delete dialog
+const deleteDialog = document.createElement("div");
+deleteDialog.id = "delete-set-dialog";
+deleteDialog.classList.add("delete-dialog", "hide");
+deleteDialog.innerHTML = `
+  <div class="delete-dialog-content">
+    <h3>Delete Set Confirmation</h3>
+    <p>To delete this set, please type the set name: <span id="set-name-to-delete"></span></p>
+    <input type="text" id="delete-confirmation-input" class="input" placeholder="Type set name to confirm">
+    <div class="delete-dialog-buttons">
+      <button id="confirm-delete-btn" class="danger-button">Delete Set</button>
+      <button id="cancel-delete-btn" class="secondary-button">Cancel</button>
+    </div>
+    <p id="delete-error" class="error-message hide">Set name doesn't match</p>
+  </div>
+`;
+
 
 // Insert the set management div before the card list container
 if (listCard && listCard.parentNode) {
   listCard.parentNode.insertBefore(setManagementDiv, listCard);
+  document.body.appendChild(deleteDialog);
 }
 
 // Initialize application
@@ -65,13 +97,82 @@ closeBtn.addEventListener("click", hideQuestion);
 cardButton.addEventListener("click", submitQuestion);
 
 addSetButton.addEventListener("click", createNewSet);
+deleteSetButton.addEventListener("click", showDeleteDialog);
 
 setSelector.addEventListener("change", (e) => {
   currentSetId = e.target.value;
   renderCurrentSet();
 });
 
+// Add event listeners for delete functionality once elements are created
+document.getElementById('confirm-delete-btn').addEventListener("click", confirmDeleteSet);
+document.getElementById('cancel-delete-btn').addEventListener("click", hideDeleteDialog);
+document.getElementById('delete-confirmation-input').addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    confirmDeleteSet();
+  }
+});
+
 // Functions
+function showDeleteDialog() {
+  if (currentSetId === "default") {
+    alert("Cannot delete the default set");
+    return;
+  }
+
+  if (Object.keys(sets).length <= 1) {
+    alert("Cannot delete the only remaining set");
+    return;
+  }
+
+  const deleteDialog = document.getElementById('delete-set-dialog');
+  const setNameToDelete = document.getElementById('set-name-to-delete');
+  const deleteConfirmationInput = document.getElementById('delete-confirmation-input');
+  const deleteError = document.getElementById('delete-error');
+
+  deleteDialog.classList.remove("hide");
+  setNameToDelete.textContent = currentSetId;
+  deleteConfirmationInput.value = "";
+  deleteError.classList.add("hide");
+}
+
+function hideDeleteDialog() {
+  const deleteDialog = document.getElementById('delete-set-dialog');
+  const deleteConfirmationInput = document.getElementById('delete-confirmation-input');
+  const deleteError = document.getElementById('delete-error');
+
+  deleteDialog.classList.add("hide");
+  deleteConfirmationInput.value = "";
+  deleteError.classList.add("hide");
+}
+
+function confirmDeleteSet() {
+  const deleteConfirmationInput = document.getElementById('delete-confirmation-input');
+  const deleteError = document.getElementById('delete-error');
+  const confirmationText = deleteConfirmationInput.value.trim();
+
+  if (confirmationText === currentSetId) {
+    // Delete the set
+    delete sets[currentSetId];
+
+    // Set current set to the first available set
+    currentSetId = Object.keys(sets)[0] || "default";
+
+    // Save to localStorage
+    saveSetsToLocalStorage();
+
+    // Update UI
+    updateSetSelector();
+    renderCurrentSet();
+
+    // Hide dialog
+    hideDeleteDialog();
+  } else {
+    deleteError.classList.remove("hide");
+  }
+}
+
+// Functions before delete set functionality was added
 function hideQuestion() {
   container.classList.remove("hide");
   addQuestionCard.classList.add("hide");
@@ -284,80 +385,3 @@ const deleteDialogHTML = `
   </div>
 </div>
 `;
-
-// Insert the dialog HTML after the container
-document.querySelector('.container').insertAdjacentHTML('afterend', deleteDialogHTML);
-
-// Add delete button next to the set selector
-const deleteSetButton = document.createElement("button");
-deleteSetButton.textContent = "Delete Current Set";
-deleteSetButton.id = "delete-set-btn";
-deleteSetButton.classList.add("danger-button");
-setManagementDiv.querySelector('.set-controls').appendChild(deleteSetButton);
-
-// Get dialog elements
-const deleteDialog = document.getElementById('delete-set-dialog');
-const deleteConfirmationInput = document.getElementById('delete-confirmation-input');
-const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
-const setNameToDelete = document.getElementById('set-name-to-delete');
-const deleteError = document.getElementById('delete-error');
-
-// Add event listeners for delete functionality
-deleteSetButton.addEventListener("click", showDeleteDialog);
-confirmDeleteBtn.addEventListener("click", confirmDeleteSet);
-cancelDeleteBtn.addEventListener("click", hideDeleteDialog);
-
-// When pressing Enter in the confirmation input, trigger delete button
-deleteConfirmationInput.addEventListener("keyup", (e) => {
-  if (e.key === "Enter") {
-    confirmDeleteSet();
-  }
-});
-
-function showDeleteDialog() {
-  if (currentSetId === "default") {
-    alert("Cannot delete the default set");
-    return;
-  }
-
-  if (Object.keys(sets).length <= 1) {
-    alert("Cannot delete the only remaining set");
-    return;
-  }
-
-  deleteDialog.classList.remove("hide");
-  setNameToDelete.textContent = currentSetId;
-  deleteConfirmationInput.value = "";
-  deleteError.classList.add("hide");
-}
-
-function hideDeleteDialog() {
-  deleteDialog.classList.add("hide");
-  deleteConfirmationInput.value = "";
-  deleteError.classList.add("hide");
-}
-
-function confirmDeleteSet() {
-  const confirmationText = deleteConfirmationInput.value.trim();
-
-  if (confirmationText === currentSetId) {
-    // Delete the set
-    delete sets[currentSetId];
-
-    // Set current set to the first available set
-    currentSetId = Object.keys(sets)[0] || "default";
-
-    // Save to localStorage
-    saveSetsToLocalStorage();
-
-    // Update UI
-    updateSetSelector();
-    renderCurrentSet();
-
-    // Hide dialog
-    hideDeleteDialog();
-  } else {
-    deleteError.classList.remove("hide");
-  }
-}

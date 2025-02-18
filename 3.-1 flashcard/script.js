@@ -1,3 +1,10 @@
+// Global variables
+let currentSetId = "default";
+let sets = {};
+let currentCardIndex = -1;
+let editBool = false;
+
+// DOM Elements
 const container = document.querySelector(".container");
 const addQuestionCard = document.getElementById("add-question-card");
 const cardButton = document.getElementById("save-btn");
@@ -6,27 +13,46 @@ const answer = document.getElementById("answer");
 const errorMessage = document.getElementById("error");
 const addQuestion = document.getElementById("add-flashcard");
 const closeBtn = document.getElementById("close-btn");
-let editBool = false;
-let cards = [];
-let currentCardIndex = -1;
-
-// Initialize the card list container reference
 const listCard = document.querySelector(".card-list-container");
-if (!listCard) {
-  console.error("Could not find card-list-container element");
+
+// New DOM elements for set management
+const setSelector = document.createElement("select");
+setSelector.id = "set-selector";
+setSelector.classList.add("set-selector");
+
+const setNameInput = document.createElement("input");
+setNameInput.type = "text";
+setNameInput.id = "new-set-name";
+setNameInput.placeholder = "New set name";
+
+const addSetButton = document.createElement("button");
+addSetButton.textContent = "Create New Set";
+addSetButton.id = "add-set-btn";
+
+// Create a set management container
+const setManagementDiv = document.createElement("div");
+setManagementDiv.classList.add("set-management");
+setManagementDiv.appendChild(setSelector);
+setManagementDiv.appendChild(setNameInput);
+setManagementDiv.appendChild(addSetButton);
+
+// Insert the set management div before the card list container
+if (listCard && listCard.parentNode) {
+  listCard.parentNode.insertBefore(setManagementDiv, listCard);
 }
 
-// Load cards from local storage when the page loads
+// Initialize application
 document.addEventListener('DOMContentLoaded', () => {
   try {
-    loadCardsFromLocalStorage();
-    renderCards();
+    loadSetsFromLocalStorage();
+    updateSetSelector();
+    renderCurrentSet();
   } catch (error) {
     console.error("Error during initialization:", error);
   }
 });
 
-// Add question when user clicks 'Add Flashcard' button
+// Event Listeners
 addQuestion.addEventListener("click", () => {
   container.classList.add("hide");
   question.value = "";
@@ -34,97 +60,156 @@ addQuestion.addEventListener("click", () => {
   addQuestionCard.classList.remove("hide");
 });
 
-// Hide Create flashcard Card
-closeBtn.addEventListener(
-    "click",
-    (hideQuestion = () => {
-      container.classList.remove("hide");
-      addQuestionCard.classList.add("hide");
-      if (editBool) {
-        editBool = false;
-        submitQuestion();
-      }
-    })
-);
+closeBtn.addEventListener("click", hideQuestion);
 
-// Submit Question
-cardButton.addEventListener(
-    "click",
-    (submitQuestion = () => {
-      tempQuestion = question.value.trim();
-      tempAnswer = answer.value.trim();
-      if (!tempQuestion || !tempAnswer) {
-        errorMessage.classList.remove("hide");
-      } else {
-        container.classList.remove("hide");
-        errorMessage.classList.add("hide");
+cardButton.addEventListener("click", submitQuestion);
 
-        if (editBool) {
-          // Update existing card
-          cards[currentCardIndex] = {
-            question: tempQuestion,
-            answer: tempAnswer
-          };
-          editBool = false;
-        } else {
-          // Add new card
-          cards.push({
-            question: tempQuestion,
-            answer: tempAnswer
-          });
-        }
+addSetButton.addEventListener("click", createNewSet);
 
-        // Save to local storage
-        saveCardsToLocalStorage();
+setSelector.addEventListener("change", (e) => {
+  currentSetId = e.target.value;
+  renderCurrentSet();
+});
 
-        // Render updated cards
-        renderCards();
-
-        question.value = "";
-        answer.value = "";
-      }
-    })
-);
-
-// Save cards to local storage
-function saveCardsToLocalStorage() {
-  try {
-    localStorage.setItem('flashcards', JSON.stringify(cards));
-  } catch (error) {
-    console.error("Error saving to localStorage:", error);
+// Functions
+function hideQuestion() {
+  container.classList.remove("hide");
+  addQuestionCard.classList.add("hide");
+  if (editBool) {
+    editBool = false;
+    submitQuestion();
   }
 }
 
-// Load cards from local storage
-function loadCardsFromLocalStorage() {
-  try {
-    const storedCards = localStorage.getItem('flashcards');
-    if (storedCards) {
-      cards = JSON.parse(storedCards);
+function submitQuestion() {
+  const tempQuestion = question.value.trim();
+  const tempAnswer = answer.value.trim();
+
+  if (!tempQuestion || !tempAnswer) {
+    errorMessage.classList.remove("hide");
+  } else {
+    container.classList.remove("hide");
+    errorMessage.classList.add("hide");
+
+    // Initialize current set if it doesn't exist
+    if (!sets[currentSetId]) {
+      sets[currentSetId] = [];
+    }
+
+    if (editBool) {
+      // Update existing card
+      sets[currentSetId][currentCardIndex] = {
+        question: tempQuestion,
+        answer: tempAnswer
+      };
+      editBool = false;
     } else {
-      cards = [];
+      // Add new card
+      sets[currentSetId].push({
+        question: tempQuestion,
+        answer: tempAnswer
+      });
+    }
+
+    // Save to local storage
+    saveSetsToLocalStorage();
+
+    // Render updated cards
+    renderCurrentSet();
+
+    question.value = "";
+    answer.value = "";
+  }
+}
+
+function createNewSet() {
+  const newSetName = setNameInput.value.trim();
+  if (newSetName) {
+    currentSetId = newSetName;
+    if (!sets[currentSetId]) {
+      sets[currentSetId] = [];
+    }
+    saveSetsToLocalStorage();
+    updateSetSelector();
+    renderCurrentSet();
+    setNameInput.value = "";
+  }
+}
+
+function updateSetSelector() {
+  // Clear existing options
+  setSelector.innerHTML = "";
+
+  // Add options for each set
+  Object.keys(sets).forEach(setId => {
+    const option = document.createElement("option");
+    option.value = setId;
+    option.textContent = setId;
+    if (setId === currentSetId) {
+      option.selected = true;
+    }
+    setSelector.appendChild(option);
+  });
+
+  // If no sets exist, create default set
+  if (Object.keys(sets).length === 0) {
+    sets["default"] = [];
+    currentSetId = "default";
+    saveSetsToLocalStorage();
+    updateSetSelector();
+  }
+}
+
+function saveSetsToLocalStorage() {
+  try {
+    localStorage.setItem('flashcardSets', JSON.stringify(sets));
+  } catch (error) {
+    console.error("Error saving sets to localStorage:", error);
+  }
+}
+
+function loadSetsFromLocalStorage() {
+  try {
+    const storedSets = localStorage.getItem('flashcardSets');
+    if (storedSets) {
+      sets = JSON.parse(storedSets);
+
+      // If sets is empty or invalid, initialize with default
+      if (!sets || Object.keys(sets).length === 0) {
+        sets = { "default": [] };
+      }
+    } else {
+      sets = { "default": [] };
+    }
+
+    // Make sure currentSetId exists
+    if (!sets[currentSetId]) {
+      currentSetId = Object.keys(sets)[0] || "default";
     }
   } catch (error) {
     console.error("Error loading from localStorage:", error);
-    cards = [];
+    sets = { "default": [] };
   }
 }
 
-// Render all cards
-function renderCards() {
+function renderCurrentSet() {
   if (!listCard) return;
 
   // Clear existing cards
   listCard.innerHTML = '';
 
+  // Make sure the current set exists
+  if (!sets[currentSetId]) {
+    sets[currentSetId] = [];
+  }
+
   // Create and append each card
-  cards.forEach((card, index) => {
+  sets[currentSetId].forEach((card, index) => {
     const div = createCardElement(card, index);
     listCard.appendChild(div);
   });
 }
 
-// Create a card element
 function createCardElement(card, index) {
   const div = document.createElement("div");
   div.classList.add("card");
@@ -174,18 +259,12 @@ function createCardElement(card, index) {
   deleteButton.setAttribute("class", "delete");
   deleteButton.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
   deleteButton.addEventListener("click", () => {
-    cards.splice(index, 1);
-    saveCardsToLocalStorage();
-    renderCards();
+    sets[currentSetId].splice(index, 1);
+    saveSetsToLocalStorage();
+    renderCurrentSet();
   });
   buttonsCon.appendChild(deleteButton);
 
   div.appendChild(buttonsCon);
   return div;
-}
-
-// Helper function to hide the question card
-function hideQuestion() {
-  container.classList.remove("hide");
-  addQuestionCard.classList.add("hide");
 }

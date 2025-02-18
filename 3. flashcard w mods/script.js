@@ -114,6 +114,20 @@ document.getElementById('delete-confirmation-input').addEventListener("keyup", (
 });
 
 // Functions
+function createNewSet() {
+  const newSetName = newSetNameInput.value.trim();
+  if (newSetName) {
+    currentSetId = newSetName;
+    if (!sets[currentSetId]) {
+      sets[currentSetId] = [];
+    }
+    saveSetsToLocalStorage();
+    updateSetSelector();
+    renderCurrentSet();
+    newSetNameInput.value = "";
+  }
+}
+
 function showDeleteDialog() {
   if (currentSetId === "default") {
     alert("Cannot delete the default set");
@@ -223,19 +237,6 @@ function submitQuestion() {
   }
 }
 
-function createNewSet() {
-  const newSetName = setNameInput.value.trim();
-  if (newSetName) {
-    currentSetId = newSetName;
-    if (!sets[currentSetId]) {
-      sets[currentSetId] = [];
-    }
-    saveSetsToLocalStorage();
-    updateSetSelector();
-    renderCurrentSet();
-    setNameInput.value = "";
-  }
-}
 
 function updateSetSelector() {
   // Clear existing options

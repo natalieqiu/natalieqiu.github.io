@@ -67,11 +67,6 @@ deleteDialog.innerHTML = `
 `;
 
 
-// Insert the set management div before the card list container
-if (listCard && listCard.parentNode) {
-  listCard.parentNode.insertBefore(setManagementDiv, listCard);
-  document.body.appendChild(deleteDialog);
-}
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', () => {
@@ -79,6 +74,21 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSetsFromLocalStorage();
     updateSetSelector();
     renderCurrentSet();
+
+    // Insert the set management div before the card list container
+    if (listCard && listCard.parentNode) {
+      listCard.parentNode.insertBefore(setManagementDiv, listCard);
+      document.body.appendChild(deleteDialog);
+    }
+    document.getElementById('confirm-delete-btn').addEventListener("click", confirmDeleteSet);
+    document.getElementById('cancel-delete-btn').addEventListener("click", hideDeleteDialog);
+    document.getElementById('delete-confirmation-input').addEventListener("keyup", (e) => {
+      if (e.key === "Enter") {
+        confirmDeleteSet();
+      }
+    });
+
+
   } catch (error) {
     console.error("Error during initialization:", error);
   }
@@ -105,13 +115,13 @@ setSelector.addEventListener("change", (e) => {
 });
 
 // Add event listeners for delete functionality once elements are created
-document.getElementById('confirm-delete-btn').addEventListener("click", confirmDeleteSet);
-document.getElementById('cancel-delete-btn').addEventListener("click", hideDeleteDialog);
-document.getElementById('delete-confirmation-input').addEventListener("keyup", (e) => {
-  if (e.key === "Enter") {
-    confirmDeleteSet();
-  }
-});
+//document.getElementById('confirm-delete-btn').addEventListener("click", confirmDeleteSet);
+//document.getElementById('cancel-delete-btn').addEventListener("click", hideDeleteDialog);
+//document.getElementById('delete-confirmation-input').addEventListener("keyup", (e) => {
+  //if (e.key === "Enter") {
+    //confirmDeleteSet();
+  //}
+//});
 
 // Functions
 function createNewSet() {
@@ -372,17 +382,3 @@ function createCardElement(card, index) {
 }
 
 // Add this HTML structure for the delete confirmation dialog
-const deleteDialogHTML = `
-<div id="delete-set-dialog" class="delete-dialog hide">
-  <div class="delete-dialog-content">
-    <h3>Delete Set Confirmation</h3>
-    <p>To delete this set, please type the set name: <span id="set-name-to-delete"></span></p>
-    <input type="text" id="delete-confirmation-input" class="input" placeholder="Type set name to confirm">
-    <div class="delete-dialog-buttons">
-      <button id="confirm-delete-btn" class="danger-button">Delete Set</button>
-      <button id="cancel-delete-btn" class="secondary-button">Cancel</button>
-    </div>
-    <p id="delete-error" class="error-message hide">Set name doesn't match</p>
-  </div>
-</div>
-`;

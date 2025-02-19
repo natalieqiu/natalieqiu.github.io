@@ -50,6 +50,10 @@ setControls.appendChild(deleteSetButton);
 setManagementDiv.appendChild(setControls);
 
 // Create delete dialog
+
+function deleteDiallog() {
+}
+/*
 const deleteDialog = document.createElement("div");
 deleteDialog.id = "delete-set-dialog";
 deleteDialog.classList.add("delete-dialog", "hide");
@@ -65,7 +69,7 @@ deleteDialog.innerHTML = `
     <p id="delete-error" class="error-message hide">Set name doesn't match</p>
   </div>
 `;
-
+*/
 
 
 // Initialize application

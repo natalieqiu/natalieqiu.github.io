@@ -110,7 +110,7 @@ closeBtn.addEventListener("click", hideQuestion);
 
 cardButton.addEventListener("click", submitQuestion);
 
-addSetButton.addEventListener("click", createNewSet);
+//addSetButton.addEventListener("click", createNewSet);
 deleteSetButton.addEventListener("click", showDeleteDialog);
 
 setSelector.addEventListener("change", (e) => {

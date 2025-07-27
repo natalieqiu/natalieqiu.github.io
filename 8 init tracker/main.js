@@ -2,49 +2,51 @@
  * for now keep it simple: all entities are boss entities.
  * coming soon: we lock multi turns only for bosses,
  * and do Lairs, which dont roll turns. they just have their set number.
-  */
+ */
 
-class entityBaseData
-
-(n, i, t)
-{
-    name: n,
-        initMod
-:
-    i,
-        turns
-:
-    t
+class entityBaseData {
+    constructor(n, i, t) {
+        this.name = n;
+        this.initMod = i;
+        this.turns = t;
+    }
+    getInit(){
+        return getRandomInit(this.initMod);
+    }
 }
 
-class nonBossEntity
-
-(n, i) = {
-    entity: entity(n, i, 1);
+class nonBossEntity extends entityBaseData {
+    constructor(n, i) {
+        super(n, i, 1);
+    }
 }
 
-class lairActionEntity
-
-(n, i)
-{
-    entity = entity(n, 0, 1)
+class lairActionObject {
+    constructor(n, i) {
+        this.name = n;
+        this.initFixed = i;
+    }
+    getInit(){
+        return this.initFixed;
+    }
 }
 
 var numDice = 1;
 var diceFaces = 2;
 
-class turnObject
-(entity) = {
-    entity: entity,
-    rolledinit =
-    turnOrder =
-    tempTurnOrder =
-    downed = false;
+class turnObject {
+    constructor(entity) {
+        this.entity = entity;
+        this.downed = false;
+    }
+    rollInit(){
+        return this.entity.rollInit();
+    }
 }
 
-function getRandomInit(turnObject) {
-    i = turnObject.entity.initMod;
-    for (var i = 0; i < numDice; i++) {
+function getRandomInit(initMod) {
+    let i = initMod;
+    for (var j = 0; i < numDice; j++) {
         i += Math.floor(Math.random() * diceFaces)
     }
     return i;
@@ -69,38 +71,42 @@ function goNextTurn() {
     restartThisTurn();
     rollTurn(nextTurn);
 }
-function next(){
+
+function next() {
     if (whosGoing >= thisTurn.length) goNextTurn()
     else whosGoing++;
     //update visuals
 }
-function previous(){
+
+function previous() {
     if (whosGoing <= 1) return;
     whosGoing--;
     //update visuals
 }
-function restoreTurn(turn){
+
+function restoreTurn(turn) {
     //reset temp turn order to turn order
 }
-function restartThisTurn{
+
+function restartThisTurn {
     whosGoing = 1;
     //update css...
 }
 
 // when dragging stuff around on top we can change the displayed turn order
 //also while dragging on the pause screen we can reorder.
-function dragToReorder{
+function dragToReorder {
 
 }
+
 //when clicking on bottom we can down or raise an entity
-function downUp{
+function downUp {
     //on click:
     turnObject.downed = !turnObject.downed;
     if (turnObject.downed) {
         //play sfx explode / splat, depending on if enemey or player
         //CSS update? grey out in initline, rotate 45 degrees in field
-    }
-    else{
+    } else {
         //play heal up sfx
         //css update: no grey overlay, rotate back to upright
     }
@@ -120,7 +126,7 @@ var badSide = { //this is data for stuff on the pause screen
     var Enemies = [],
     var LairActions = [] //max 4
 }
-var Friends = [] ;//max 8. data for stuff on the pause screen
+var Friends = [];//max 8. data for stuff on the pause screen
 
 var thisTurn = [];
 var nextTurn = [];

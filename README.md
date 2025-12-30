@@ -9,3 +9,6 @@ Though while you're here, check out my [Initiative Tracker](https://natalieqiu.g
 3. skill tree/ family tree generator
 4. personal blog
 5. password manager?
+
+# to deploy to gh pages
+npm run deploy

@@ -1,3 +1,11 @@
+.header {
+    background-size: cover;
+    padding: 60px;
+    text-align: center;
+    background: url('img/wood-texture.jpg');
+    color: white;
+    font-size: 30px;
+}
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -5,12 +13,16 @@
     padding: 2rem;
 }
 .project-card {
-    border: 1px solid #ddd;
+    border-style: dotted solid double solid;
     padding: 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
+    text-decoration: aquamarine;
     color: inherit;
     transition: transform 0.2s;
+}
+.project-card[s="WIP"] {
+    background: lightgray;
+    color: white;
+
 }
 .project-card:hover {
     transform: translateY(-5px);

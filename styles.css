@@ -28,3 +28,12 @@
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
+
+
+.footer {
+    background-size: cover;
+    padding: 3px;
+    text-align: center;
+    background-image: linear-gradient(to bottom, #c57dc1, #6c4a7a);
+    color: white;
+}

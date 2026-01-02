@@ -6,6 +6,12 @@
     color: white;
     font-size: 30px;
 }
+
+.game {
+    position: relative;
+
+}
+
 .project-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

@@ -89,7 +89,7 @@ let dz = 1 //moving translation
 
 function frame(){
     const dt = 1/FPS
-  //  dz += 1*dt
+    dz += 1*dt * Math.sin(angle);
     angle += Math.PI*dt;
     clear()
     drawpoint(screen({x:0,y:0})) //centerpoint

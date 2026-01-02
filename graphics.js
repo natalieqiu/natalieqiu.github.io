@@ -2,6 +2,7 @@
 const BG = "#EEEEEE"
 const FG = "#ff55ff"
 const SECONDARYCOLOR = "#000000"
+const pointsize = 5
 
 console.log(graphics)
 
@@ -20,7 +21,7 @@ function clear(){
 
 //this is doing the "Rendering"
 function drawpoint({x,y}){
-    const s = 10; //size of point
+    const s = pointsize; //size of point
     ctx.fillStyle = FG
     ctx.fillRect(x-s/2, y - s/2, s, s);
 }
@@ -87,7 +88,7 @@ function rotate_xz({x,y,z}, angle){
 let angle = 0 //moving rotation. starting angle
 let dz = 1 //moving translation
 
-function frame(){
+function frame( ){
     const dt = 1/FPS
     dz += 1*dt * Math.sin(angle);
     angle += Math.PI*dt;

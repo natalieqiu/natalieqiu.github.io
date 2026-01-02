@@ -32,9 +32,19 @@
     color: white;
 
 }
+.project-card[s="STAR"] {
+    -webkit-box-shadow: 0px 0px 17px 10px rgba(255,240,90,0.84);
+    box-shadow: 0px 0px 17px 10px rgba(255,240,90,0.84);
+}
 .project-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.project-card[s="STAR"]:hover {
+    transform: translateY(-5px);
+    -webkit-box-shadow: 0px 0px 17px 20px rgba(255,243,121,0.84);
+    box-shadow: 0px 0px 17px 20px rgba(255,243,121,0.84);
+
 }
 
 

@@ -3,7 +3,7 @@ let vs, fs; // Declare at top-level (outside frame)
 let assetsLoaded = false; // Flag to check if assets are loaded
 
 // Load assets once
-import('./norm-teapot.js').then(module => {
+import('./cube.js').then(module => {
     vs = module.vs;
     fs = module.fs;
     assetsLoaded = true;
@@ -16,7 +16,7 @@ import('./norm-teapot.js').then(module => {
 const BG = "#EEEEEE"
 const FG = "#ff55ff"
 const SECONDARYCOLOR = "#000000"
-const pointsize = 1
+const pointsize = 10
 
 console.log(graphics)
 
@@ -34,19 +34,27 @@ function clear(){
 }
 
 //this is doing the "Rendering"
-function drawpoint({x,y}){
-    const s = pointsize; //size of point
-    ctx.fillStyle = FG
-    ctx.fillRect(x-s/2, y - s/2, s, s);
+function drawpoint({x, y, opacity = 1}) {
+    const s = pointsize * opacity;
+    ctx.save(); // Save current state
+    ctx.globalAlpha = opacity; // Set opacity
+
+    console.log(opacity)
+
+    ctx.fillStyle = FG;
+    ctx.fillRect(x - s / 2, y - s / 2, s, s);
+    ctx.restore(); // Restore state
 }
 
-function drawLine(p1,p2){
-    ctx.strokeStyle = FG
+function drawLine(p1, p2) {
+    ctx.save();
+    ctx.globalAlpha = (p1.opacity + p2.opacity) / 2;
+    ctx.strokeStyle = FG;
     ctx.beginPath();
-    ctx.moveTo(p1.x,p1.y);
-    ctx.lineTo(p2.x,p2.y);
-    ctx.stroke()
-
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.stroke();
+    ctx.restore();
 }
 
 ///translate from normal coords (unit square) to html canvas coordinates?
@@ -55,17 +63,21 @@ function screen(p){
     return {
         x: (p.x+1)/2*graphics.width,
         y: (1-(p.y+1)/2)*graphics.height,
+        opacity: p.opacity
     }
 }
 //the "eye" is located at 0
 function project ({x,y,z}){
+
+    //console.log((z) )
     return{
         x:x/z,
         y:y/z,
+        opacity: Math.min(1, 1/(z +1)) //this curve means z of <= 0 -> opacity = 1, and then it gets smaller and
     }
 }
 
-const FPS = 60
+const FPS = 24
 /*
 //this is a vertex plane
 const vs = [
@@ -85,7 +97,6 @@ const fs = [
     [0,4], [1,5],[2,6],[3,7]
 ]
 */
-//import {vs, fs} from './norm-teapot.js'
 
 function translate_z({x,y,z},dz){
     return {x,y, z:z+dz}
@@ -108,7 +119,7 @@ let dz = 1 //moving translation
 
 function frame( ){
     const dt = 1/FPS
-    dz += 1*dt * Math.sin(angle);
+    dz += 1*dt * 5* Math.sin(angle / 3);
     angle += Math.PI*dt;
     clear()
     //drawpoint(screen({x:0,y:0})) //centerpoint

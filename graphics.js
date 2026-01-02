@@ -1,8 +1,22 @@
 //this follows the video "one formula that demistifies 3d graphics" by Tsoding
+let vs, fs; // Declare at top-level (outside frame)
+let assetsLoaded = false; // Flag to check if assets are loaded
+
+// Load assets once
+import('./norm-teapot.js').then(module => {
+    vs = module.vs;
+    fs = module.fs;
+    assetsLoaded = true;
+
+    // Start the animation loop only after assets are loaded
+    frame();
+});
+
+
 const BG = "#EEEEEE"
 const FG = "#ff55ff"
 const SECONDARYCOLOR = "#000000"
-const pointsize = 5
+const pointsize = 1
 
 console.log(graphics)
 
@@ -51,7 +65,8 @@ function project ({x,y,z}){
     }
 }
 
-const FPS = 30
+const FPS = 60
+/*
 //this is a vertex plane
 const vs = [
     {x:0.5,y:0.5,z:0.5},
@@ -69,6 +84,9 @@ const fs = [
     [4,5,6,7],
     [0,4], [1,5],[2,6],[3,7]
 ]
+*/
+//import {vs, fs} from './norm-teapot.js'
+
 function translate_z({x,y,z},dz){
     return {x,y, z:z+dz}
 }
@@ -93,7 +111,7 @@ function frame( ){
     dz += 1*dt * Math.sin(angle);
     angle += Math.PI*dt;
     clear()
-    drawpoint(screen({x:0,y:0})) //centerpoint
+    //drawpoint(screen({x:0,y:0})) //centerpoint
     for (const v of vs){
         drawpoint(screen(project( translate_z(rotate_xz(v,angle), dz) )));
     }
@@ -111,5 +129,3 @@ function frame( ){
 
     setTimeout(frame, 1000/FPS)
 }
-
-frame()

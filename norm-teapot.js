@@ -1,3 +1,6 @@
+//from: https://sketchfab.com/3d-models/the-utah-teapot-1092c2832df14099807f66c8b792374d
+//note: THIS WILL BOIL YOUR COMPUTER. do not use
+// by Kenzie Lamar , downloaded 1/1/2026
 export const vs = [
     {x:0.3689951945283729,y:0.5139877813438811,z:0.0972746071240167},
     {x:0.3647790156197237,y:0.5156462005731397,z:0.09633493374986601},

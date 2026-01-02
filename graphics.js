@@ -2,8 +2,11 @@
 let vs, fs; // Declare at top-level (outside frame)
 let assetsLoaded = false; // Flag to check if assets are loaded
 
+const SOURCEFILE //= './norm-teapot.js'
+//= './cube.js'
+= './lowpoly-teapot.js'
 // Load assets once
-import('./cube.js').then(module => {
+import(SOURCEFILE).then(module => {
     vs = module.vs;
     fs = module.fs;
     assetsLoaded = true;
@@ -38,8 +41,7 @@ function drawpoint({x, y, opacity = 1}) {
     const s = pointsize * opacity;
     ctx.save(); // Save current state
     ctx.globalAlpha = opacity; // Set opacity
-
-    console.log(opacity)
+    //console.log(opacity)
 
     ctx.fillStyle = FG;
     ctx.fillRect(x - s / 2, y - s / 2, s, s);
@@ -47,12 +49,15 @@ function drawpoint({x, y, opacity = 1}) {
 }
 
 function drawLine(p1, p2) {
+    const aveOpa = (p1.opacity + p2.opacity) / 2;
     ctx.save();
-    ctx.globalAlpha = (p1.opacity + p2.opacity) / 2;
+    ctx.globalAlpha = aveOpa;
+    //console.log(aveOpa);
     ctx.strokeStyle = FG;
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);
+    ctx.lineWidth = pointsize * aveOpa;
     ctx.stroke();
     ctx.restore();
 }
@@ -73,30 +78,11 @@ function project ({x,y,z}){
     return{
         x:x/z,
         y:y/z,
-        opacity: Math.min(1, 1/(z +1)) //this curve means z of <= 0 -> opacity = 1, and then it gets smaller and
+        opacity: Math.min(1, 1/(5*z +1)) //this curve means z of <= 0 -> opacity = 1, and then it gets smaller and
     }
 }
 
 const FPS = 24
-/*
-//this is a vertex plane
-const vs = [
-    {x:0.5,y:0.5,z:0.5},
-    {x:-0.5,y:0.5,z:0.5},
-    {x:-0.5,y:-0.5,z:0.5},
-    {x:0.5,y:-0.5,z:0.5},
-
-    {x:0.5,y:0.5,z:-0.5},
-    {x:-0.5,y:0.5,z:-0.5},
-    {x:-0.5,y:-0.5,z:-0.5},
-    {x:0.5,y:-0.5,z:-0.5},
-]
-const fs = [
-    [0,1,2,3],
-    [4,5,6,7],
-    [0,4], [1,5],[2,6],[3,7]
-]
-*/
 
 function translate_z({x,y,z},dz){
     return {x,y, z:z+dz}
@@ -115,11 +101,11 @@ function rotate_xz({x,y,z}, angle){
 }
 
 let angle = 0 //moving rotation. starting angle
-let dz = 1 //moving translation
+let dz = 1  //moving translation
 
 function frame( ){
     const dt = 1/FPS
-    dz += 1*dt * 5* Math.sin(angle / 3);
+    dz +=  Math.sin(angle) /4;
     angle += Math.PI*dt;
     clear()
     //drawpoint(screen({x:0,y:0})) //centerpoint

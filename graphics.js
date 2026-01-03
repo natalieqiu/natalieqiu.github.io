@@ -101,11 +101,19 @@ function rotate_xz({x,y,z}, angle){
 }
 
 let angle = 0 //moving rotation. starting angle
-let dz = 1  //moving translation
+let dz = 1  //initial moving translation
+
+const zRad = document.querySelector("#zRadius")
+const zRadOut = document.querySelector("#zRadiusOut")
+zRadOut.textContent = zRad.value;
+zRad.addEventListener("input", (e)=> zRadOut.textContent = e.target.value);
 
 function frame( ){
     const dt = 1/FPS
-    dz +=  Math.sin(angle) /4;
+    dz =  1+ zRad.value *(1 + Math.sin(angle));
+
+    console.log(dz)
+
     angle += Math.PI*dt;
     clear()
     //drawpoint(screen({x:0,y:0})) //centerpoint

@@ -82,8 +82,6 @@ function project ({x,y,z}){
     }
 }
 
-const FPS = 24
-
 function translate_z({x,y,z},dz){
     return {x,y, z:z+dz}
 }
@@ -99,9 +97,6 @@ function rotate_xz({x,y,z}, angle){
     }
 
 }
-
-let angle = 0 //moving rotation. starting angle
-let dz = 1  //initial moving translation
 
 //generalized code with chatgpt:
 function linkInputToOutput(inputSelector, outputSelector) {
@@ -119,21 +114,26 @@ function linkInputToOutput(inputSelector, outputSelector) {
 }
 
 // Usage:
-const zRad = linkInputToOutput("#zRadius", "#zRadiusOut").value;
-console.log(zRad); // Reflects the latest input
+const zRad = linkInputToOutput("#zRadius", "#zRadiusOut");
+const rotSpeed = linkInputToOutput("#rotationSpeed", "#rotationSpeedOut");
 /////
+const FPS = 24
+let t = 0 //moving rotation. starting angle
 
 function frame( ){
     const dt = 1/FPS
-    dz =  1+ zRad *(1 + Math.sin(angle));
 
-    console.log(dz)
+    const zOscilationHeight = zRad.value;
+    const angle = rotSpeed.value * t;
 
-    angle += Math.PI*dt;
+    t = t + dt
+    const dz =  1 + zOscilationHeight/2 + zOscilationHeight*Math.sin(t);
+
+    //console.log(rotSpeed);
     clear()
     //drawpoint(screen({x:0,y:0})) //centerpoint
     for (const v of vs){
-        drawpoint(screen(project( translate_z(rotate_xz(v,angle), dz) )));
+        drawpoint(screen(project( translate_z(rotate_xz(v, angle,), dz ) )));
     }
     for (const f of fs){
         for (let i=0; i<f.length; ++i){

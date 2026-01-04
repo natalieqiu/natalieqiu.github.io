@@ -103,14 +103,29 @@ function rotate_xz({x,y,z}, angle){
 let angle = 0 //moving rotation. starting angle
 let dz = 1  //initial moving translation
 
-const zRad = document.querySelector("#zRadius")
-const zRadOut = document.querySelector("#zRadiusOut")
-zRadOut.textContent = zRad.value;
-zRad.addEventListener("input", (e)=> zRadOut.textContent = e.target.value);
+//generalized code with chatgpt:
+function linkInputToOutput(inputSelector, outputSelector) {
+    const inputElem = document.querySelector(inputSelector);
+    const outputElem = document.querySelector(outputSelector);
+    if (!inputElem || !outputElem) {
+        console.warn("Invalid selectors or elements not found.");
+        return null;
+    }
+    outputElem.textContent = inputElem.value;
+    inputElem.addEventListener("input", (e) => {
+        outputElem.textContent = e.target.value;
+    });
+    return inputElem; // You can access.value anytime
+}
+
+// Usage:
+const zRad = linkInputToOutput("#zRadius", "#zRadiusOut").value;
+console.log(zRad); // Reflects the latest input
+/////
 
 function frame( ){
     const dt = 1/FPS
-    dz =  1+ zRad.value *(1 + Math.sin(angle));
+    dz =  1+ zRad *(1 + Math.sin(angle));
 
     console.log(dz)
 

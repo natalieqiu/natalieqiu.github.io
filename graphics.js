@@ -17,7 +17,8 @@ import(SOURCEFILE).then(module => {
 
 
 const BG = "#EEEEEE"
-const FG = "#ff55ff"
+let FG = "#ff55ff"
+
 const SECONDARYCOLOR = "#000000"
 const pointsize = 10
 
@@ -116,6 +117,8 @@ function linkInputToOutput(inputSelector, outputSelector) {
 // Usage:
 const zRad = linkInputToOutput("#zRadius", "#zRadiusOut");
 const rotSpeed = linkInputToOutput("#rotationSpeed", "#rotationSpeedOut");
+const color = linkInputToOutput("#itemColor", "#itemColorOut")
+
 /////
 const FPS = 24
 let t = 0 //moving rotation. starting angle
@@ -129,7 +132,8 @@ function frame( ){
     t = t + dt
     const dz =  1 + zOscilationHeight/2 + zOscilationHeight*Math.sin(t);
 
-    //console.log(rotSpeed);
+    //console.log(color.value);
+    FG = color.value.toString();
     clear()
     //drawpoint(screen({x:0,y:0})) //centerpoint
     for (const v of vs){

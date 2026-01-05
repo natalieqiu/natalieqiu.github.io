@@ -47,6 +47,10 @@
 
 }
 
+.teapot-control{
+    display: flex;
+    flex-direction: column;
+}
 
 .footer {
     background-size: cover;

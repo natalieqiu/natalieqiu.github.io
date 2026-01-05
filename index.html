@@ -71,8 +71,11 @@
         <canvas class = "graphics" id = "graphics">
         </canvas>
         <div class="teapot-control">
+            <label for="itemColor"> Color? = <output id="itemColorOut"> </output> </label>
+            <input type="color" id="itemColor">
+
             <label for="rotationSpeed"> Rotation speed = <output id="rotationSpeedOut"> </output> </label>
-            <input type="range" min="0" max="10" step=".5" value="1" id="rotationSpeed">
+            <input type="range" min="-10" max="10" step=".5" value="1" id="rotationSpeed">
 
             <label for="zRadius"> Z-oscillation = <output id="zRadiusOut"> </output> </label>
             <input type="range" min="-1" max="6" step=".1" value="1" id="zRadius">

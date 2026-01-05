@@ -119,12 +119,12 @@ const rotSpeed = linkInputToOutput("#rotationSpeed", "#rotationSpeedOut");
 /////
 const FPS = 24
 let t = 0 //moving rotation. starting angle
-
+let angle = 0
 function frame( ){
     const dt = 1/FPS
 
     const zOscilationHeight = zRad.value;
-    const angle = rotSpeed.value * t;
+    angle += rotSpeed.value * dt;
 
     t = t + dt
     const dz =  1 + zOscilationHeight/2 + zOscilationHeight*Math.sin(t);

@@ -30,8 +30,12 @@
 .project-card[s="WIP"] {
     background: lightgray;
     color: white;
-
 }
+.project-card[s="Confidential"] {
+    background: black;
+    color: white;
+}
+
 .project-card[s="STAR"] {
     -webkit-box-shadow: 0px 0px 17px 10px rgba(255,240,90,0.84);
     box-shadow: 0px 0px 17px 10px rgba(255,240,90,0.84);
